@@ -38,7 +38,7 @@ black src/
 - **aspen_wrapper.py**: COM interface wrapper for Aspen Plus with dual-mode support (Windows-only)
   - Basic mode: Direct COM access for reading/writing values
   - Enhanced mode: Advanced interface with flowsheet manipulation capabilities
-- **aspen_interface.py**: Extended Aspen Plus automation library (from AspenPlus-Python-Interface)
+- **aspen_interface.py**: Extended Aspen Plus automation library (vendored from AspenPlus-Python-Interface)
 - **tools.py**: MCP tool implementations with 11 tools including flowsheet editing
 - **resources.py**: MCP resource endpoints (simulation status)
 
@@ -52,7 +52,9 @@ The project uses `win32com.client` (pywin32) to communicate with Aspen Plus via 
 - **Dual Interface**:
   - Basic mode: Simple get/set operations on existing simulations
   - Enhanced mode: Full flowsheet manipulation (add/delete blocks, streams, connections)
-- **Enhanced Library**: Integrated AspenPlus-Python-Interface (Richard ten Hagen) providing ~5000 lines of advanced functionality
+- **Vendored Library**: `aspen_interface.py` is vendored from [AspenPlus-Python-Interface](https://github.com/YouMayCallMeJesus/AspenPlus-Python-Interface) (by Richard ten Hagen), providing ~5000 lines of advanced functionality
+  - Requires `numpy` dependency
+  - Not available as pip package, so included directly in codebase
 
 ### MCP Implementation
 

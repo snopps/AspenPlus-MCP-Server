@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import sys
 from typing import Any
 
 from mcp.server import Server
@@ -11,7 +12,12 @@ from .aspen_wrapper import AspenPlusWrapper
 from .tools import register_tools
 from .resources import register_resources
 
-logging.basicConfig(level=logging.INFO)
+# Configure logging to stderr only (stdout is used for JSON-RPC)
+logging.basicConfig(
+    level=logging.INFO,
+    stream=sys.stderr,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 

@@ -92,19 +92,31 @@ black src/
 
 ## Configuration with Claude Desktop
 
-Add to your Claude Desktop config:
+Add to your Claude Desktop config file:
+
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
     "aspenplus": {
-      "command": "python",
-      "args": ["-m", "aspenplus_mcp.server"],
-      "cwd": "/path/to/AspenPlusMCP"
+      "command": "C:\\path\\to\\AspenPlus-MCP-Server\\venv\\Scripts\\python.exe",
+      "args": [
+        "-m",
+        "aspenplus_mcp.server"
+      ]
     }
   }
 }
 ```
+
+**Important Notes:**
+- Use the **full absolute path** to your virtual environment's Python executable
+- On Windows, use double backslashes (`\\`) in paths or forward slashes (`/`)
+- After editing the config file, restart Claude Desktop completely
+- The MCP server will start automatically when Claude Desktop launches
 
 ## Usage Examples
 

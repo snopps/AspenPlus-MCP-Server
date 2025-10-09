@@ -28,7 +28,9 @@ Build an MCP (Model Context Protocol) server to enable AI assistants to interact
 ### Technology Stack
 - **Language**: Python (Windows-compatible for COM interface)
 - **MCP SDK**: Python MCP SDK from Anthropic
-- **Aspen Interface**: `win32com.client` (pywin32)
+- **Aspen Interface**:
+  - `win32com.client` (pywin32) for basic COM access
+  - [AspenPlus-Python-Interface](https://github.com/YouMayCallMeJesus/AspenPlus-Python-Interface) for enhanced flowsheet manipulation
 - **Transport**: stdio and HTTP with SSE support
 
 ### Project Structure
@@ -38,8 +40,9 @@ AspenPlusMCP/
 │   ├── aspenplus_mcp/
 │   │   ├── __init__.py
 │   │   ├── server.py          # Main MCP server
-│   │   ├── aspen_wrapper.py   # COM interface wrapper
-│   │   ├── tools.py           # MCP tool implementations
+│   │   ├── aspen_wrapper.py   # COM interface wrapper (dual-mode)
+│   │   ├── aspen_interface.py # Enhanced library (AspenPlus-Python-Interface)
+│   │   ├── tools.py           # MCP tool implementations (11 tools)
 │   │   ├── resources.py       # MCP resource implementations
 │   │   └── prompts.py         # MCP prompt templates
 ├── tests/
@@ -52,11 +55,18 @@ AspenPlusMCP/
 ### MCP Components
 
 **Tools** (executable functions):
-- `run_simulation` - Execute Aspen Plus simulation
-- `get_stream_data` - Retrieve stream properties
-- `set_block_parameter` - Modify unit operation parameters
-- `get_block_results` - Get unit operation results
-- `export_results` - Export simulation data
+- Basic Mode:
+  - `open_simulation` - Open Aspen Plus simulation file
+  - `run_simulation` - Execute Aspen Plus simulation
+  - `get_value` - Retrieve values using node paths
+  - `set_value` - Modify parameters using node paths
+  - `close_simulation` - Close simulation
+- Enhanced Mode (requires AspenPlus-Python-Interface):
+  - `place_block` - Add equipment to flowsheet
+  - `delete_block` - Remove equipment from flowsheet
+  - `place_stream` - Create material/heat/work streams
+  - `connect_stream` - Wire blocks together
+  - `save_simulation` - Save changes to file
 
 **Resources** (data exposure):
 - `simulation://status` - Current simulation state
@@ -69,33 +79,36 @@ AspenPlusMCP/
 - Troubleshoot convergence issues
 - Generate process reports
 
-## Implementation Phases
+## Implementation Status
 
-### Phase 1: Foundation
-- Set up Python project with MCP SDK
-- Implement basic Aspen Plus COM wrapper
-- Create stdio transport MCP server
+### ✅ Completed
+- **Phase 1: Foundation**
+  - ✅ Set up Python project with MCP SDK
+  - ✅ Implement basic Aspen Plus COM wrapper
+  - ✅ Create stdio transport MCP server
 
-### Phase 2: Core Tools
-- Implement file operations (open/close)
-- Add simulation control (run/reset)
-- Create basic data access tools
+- **Phase 2: Core Tools**
+  - ✅ Implement file operations (open/close)
+  - ✅ Add simulation control (run)
+  - ✅ Create basic data access tools (get/set value)
 
-### Phase 3: Data Access
-- Implement stream data retrieval
-- Add block parameter access
-- Create resource endpoints
+- **Phase 3: Enhanced Integration**
+  - ✅ Integrated AspenPlus-Python-Interface library
+  - ✅ Implemented dual-mode wrapper (basic/enhanced)
+  - ✅ Added flowsheet manipulation tools (11 total tools)
+  - ✅ Created comprehensive documentation
 
-### Phase 4: Advanced Features
-- Add parameter modification capabilities
-- Implement sensitivity analysis tools
-- Create optimization helpers
+### 🚧 In Progress / Future
+- **Phase 4: Advanced Features**
+  - ⏳ Add parameter modification capabilities
+  - ⏳ Implement sensitivity analysis tools
+  - ⏳ Create optimization helpers
 
-### Phase 5: Production Ready
-- Add HTTP/SSE transport support
-- Implement comprehensive error handling
-- Create documentation and examples
-- Set up testing suite
+- **Phase 5: Production Ready**
+  - ⏳ Add HTTP/SSE transport support
+  - ⏳ Implement comprehensive error handling
+  - ⏳ Set up testing suite
+  - ✅ Create documentation and examples
 
 ## References
 

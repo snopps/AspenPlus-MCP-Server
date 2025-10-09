@@ -22,7 +22,7 @@ MCP (Model Context Protocol) server for Aspen Plus process simulation integratio
 1. Clone this repository:
 ```bash
 git clone <repository-url>
-cd AspenPlusMCP
+cd AspenPlus-MCP-Server
 ```
 
 2. Create a virtual environment:

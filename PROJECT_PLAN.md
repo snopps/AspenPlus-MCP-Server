@@ -30,7 +30,8 @@ Build an MCP (Model Context Protocol) server to enable AI assistants to interact
 - **MCP SDK**: Python MCP SDK from Anthropic
 - **Aspen Interface**:
   - `win32com.client` (pywin32) for basic COM access
-  - [AspenPlus-Python-Interface](https://github.com/YouMayCallMeJesus/AspenPlus-Python-Interface) for enhanced flowsheet manipulation
+  - [AspenPlus-Python-Interface](https://github.com/YouMayCallMeJesus/AspenPlus-Python-Interface) (vendored) for enhanced flowsheet manipulation
+- **Dependencies**: mcp, pywin32, numpy
 - **Transport**: stdio and HTTP with SSE support
 
 ### Project Structure
@@ -41,7 +42,7 @@ AspenPlusMCP/
 │   │   ├── __init__.py
 │   │   ├── server.py          # Main MCP server
 │   │   ├── aspen_wrapper.py   # COM interface wrapper (dual-mode)
-│   │   ├── aspen_interface.py # Enhanced library (AspenPlus-Python-Interface)
+│   │   ├── aspen_interface.py # Enhanced library (vendored from AspenPlus-Python-Interface)
 │   │   ├── tools.py           # MCP tool implementations (11 tools)
 │   │   ├── resources.py       # MCP resource implementations
 │   │   └── prompts.py         # MCP prompt templates

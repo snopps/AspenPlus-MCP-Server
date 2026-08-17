@@ -76,8 +76,27 @@ def register_tools(server: Server, aspen: AspenPlusWrapper):
                 }
             ),
             Tool(
+                name="attach_simulation",
+                description=(
+                    "Attach to an Aspen Plus simulation you already have OPEN in the "
+                    "Aspen Plus GUI, instead of opening a file from disk. Connects to "
+                    "the live session, so get_value/set_value/run_simulation read and "
+                    "write the current in-memory state (including unsaved changes). "
+                    "Requires Aspen Plus to be running with a simulation loaded. Use "
+                    "this instead of open_simulation to avoid launching a second copy."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {}
+                }
+            ),
+            Tool(
                 name="close_simulation",
-                description="Close the current Aspen Plus simulation",
+                description=(
+                    "Close the current Aspen Plus simulation. If attached to a "
+                    "running instance, this only detaches - it does not close your "
+                    "Aspen Plus GUI."
+                ),
                 inputSchema={
                     "type": "object",
                     "properties": {}
@@ -182,6 +201,18 @@ def register_tools(server: Server, aspen: AspenPlusWrapper):
                 return [TextContent(
                     type="text",
                     text=f"Successfully opened simulation ({mode} mode): {filepath}"
+                )]
+
+            elif name == "attach_simulation":
+                aspen.attach()
+                return [TextContent(
+                    type="text",
+                    text=(
+                        "Attached to the running Aspen Plus instance. "
+                        "get_value, set_value, and run_simulation now act on your "
+                        "live session (unsaved changes included). close_simulation "
+                        "will detach without closing your Aspen Plus GUI."
+                    )
                 )]
 
             elif name == "run_simulation":

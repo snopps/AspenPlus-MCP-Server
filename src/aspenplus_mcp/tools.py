@@ -94,7 +94,7 @@ def register_tools(server: Server, aspen: AspenPlusWrapper):
                 name="close_simulation",
                 description=(
                     "Close the current Aspen Plus simulation. If attached to a "
-                    "running instance, this only detaches — it does not close your "
+                    "running instance, this only detaches - it does not close your "
                     "Aspen Plus GUI."
                 ),
                 inputSchema={

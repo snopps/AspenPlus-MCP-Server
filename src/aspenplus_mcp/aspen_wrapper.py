@@ -130,7 +130,7 @@ class AspenPlusWrapper:
 
         if not use_enhanced:
             # If we were attached to the user's live GUI instance, don't reuse it
-            # for a disk open — InitFromArchive2 would replace the document they
+            # for a disk open - InitFromArchive2 would replace the document they
             # have open. Drop the attached handle and launch our own engine.
             if self._attached:
                 self.aspen = None
@@ -161,7 +161,7 @@ class AspenPlusWrapper:
 
         if self.aspen:
             if self._attached:
-                # We attached to the user's running Aspen — never close their
+                # We attached to the user's running Aspen - never close their
                 # application. Just release our handle to it.
                 logger.info("Detaching from running Aspen Plus instance (not closing it)")
                 self.aspen = None

@@ -18,6 +18,7 @@ class AspenPlusWrapper:
         self._is_windows = sys.platform == "win32"
         self._current_file = None
         self._working_directory = None
+        self._attached = False  # True when attached to a user-launched Aspen instance
 
         if self._is_windows:
             try:
@@ -43,11 +44,60 @@ class AspenPlusWrapper:
 
         try:
             self.aspen = self.win32com.Dispatch("Apwn.Document")
+            self._attached = False
             logger.info("Connected to Aspen Plus")
             return True
         except Exception as e:
             logger.error(f"Failed to connect to Aspen Plus: {e}")
             raise
+
+    def attach(self) -> bool:
+        """
+        Attach to an already-running Aspen Plus instance (e.g. the one you have
+        open in the Aspen Plus GUI) instead of launching a new headless engine.
+
+        Uses COM GetActiveObject to grab the live document from the Running
+        Object Table. The simulation currently loaded in the GUI is used as-is,
+        so reads/writes see unsaved changes and no file is opened from disk.
+
+        Returns:
+            bool: True if attach successful
+
+        Raises:
+            RuntimeError: if pywin32 is unavailable or no running instance found
+        """
+        if not self.win32com:
+            raise RuntimeError("Cannot attach to Aspen Plus: pywin32 not available")
+
+        # "Apwn.Document" is the version-independent ProgID and is normally the
+        # one a running Aspen Plus (incl. V14) registers. The versioned entries
+        # are harmless fallbacks in case the ROT only exposes a versioned ProgID.
+        candidate_progids = [
+            "Apwn.Document",
+            "Apwn.Document.40.0",
+            "Apwn.Document.39.0",
+            "Apwn.Document.38.0",
+            "Apwn.Document.37.0",
+        ]
+
+        last_error = None
+        for progid in candidate_progids:
+            try:
+                self.aspen = self.win32com.GetActiveObject(progid)
+                self._attached = True
+                self._current_file = None
+                logger.info(f"Attached to running Aspen Plus instance via {progid}")
+                return True
+            except Exception as e:  # com_error when that ProgID isn't active
+                last_error = e
+                continue
+
+        logger.error(f"Failed to attach to a running Aspen Plus instance: {last_error}")
+        raise RuntimeError(
+            "Could not attach to a running Aspen Plus instance. Make sure Aspen "
+            "Plus is open with a simulation loaded, then try again. "
+            f"(last COM error: {last_error})"
+        )
 
     def open_file(self, filepath: str, use_enhanced: bool = False) -> bool:
         """
@@ -79,6 +129,13 @@ class AspenPlusWrapper:
                 use_enhanced = False
 
         if not use_enhanced:
+            # If we were attached to the user's live GUI instance, don't reuse it
+            # for a disk open — InitFromArchive2 would replace the document they
+            # have open. Drop the attached handle and launch our own engine.
+            if self._attached:
+                self.aspen = None
+                self._attached = False
+
             if not self.aspen:
                 self.connect()
 
@@ -103,14 +160,21 @@ class AspenPlusWrapper:
                 self.simulation = None
 
         if self.aspen:
-            try:
-                self.aspen.Close()
-                logger.info("Closed Aspen Plus connection")
-            except Exception as e:
-                logger.error(f"Error closing Aspen Plus: {e}")
-            finally:
+            if self._attached:
+                # We attached to the user's running Aspen — never close their
+                # application. Just release our handle to it.
+                logger.info("Detaching from running Aspen Plus instance (not closing it)")
                 self.aspen = None
+            else:
+                try:
+                    self.aspen.Close()
+                    logger.info("Closed Aspen Plus connection")
+                except Exception as e:
+                    logger.error(f"Error closing Aspen Plus: {e}")
+                finally:
+                    self.aspen = None
 
+        self._attached = False
         self._current_file = None
         self._working_directory = None
 

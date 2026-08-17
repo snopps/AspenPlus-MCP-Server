@@ -13,7 +13,7 @@ authors = [
     {name = "Daniel B"}
 ]
 dependencies = [
-    "mcp>=1.0.0",
+    "mcp>=1.0.0,<2",  # Code uses the 1.x low-level Server API (removed in mcp 2.0)
     "pywin32>=306; platform_system=='Windows'",
     "numpy>=1.20.0",  # Required by vendored aspen_interface.py
 ]
